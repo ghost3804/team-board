@@ -13,7 +13,7 @@
 :root{
   --bg:#E9ECE6; --stage:#F6F7F3; --panel:#FFFFFF; --ink:#1D2724; --muted:#66716C;
   --line:#CBD2CB; --accent:#0E6E5F; --accent-ink:#FFFFFF; --slot:#EEF1EC;
-  --warn:#B9690B; --warn-bg:#FBEFD9; --ok:#1E7A45; --ok-bg:#DDF1E3; --full:#0E6E5F; --full-bg:#D5ECE7;
+  --warn:#B9690B; --warn-bg:#FBEFD9; --ok:#1E7A45; --ok-bg:#DDF1E3; --full:#0E6E5F; --full-bg:#D5ECE7; --gold:#C08A12; --gold-bg:#FFF2CC; --gold-ink:#5A3E00;
   --shadow:0 1px 0 rgba(29,39,36,.08),0 2px 6px rgba(29,39,36,.08);
   --g1:#D6573A; --g2:#E09A1F; --g3:#9AA62B; --g4:#2E9A5B; --g5:#1F9C98;
   --g6:#2F78C4; --g7:#5B5BC8; --g8:#9150B8; --g9:#C24B8C; --g10:#7A6A55;
@@ -23,12 +23,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#121715; --stage:#1A211E; --panel:#222B27; --ink:#E7ECE8; --muted:#97A39D;
   --line:#35413C; --accent:#3FB8A3; --accent-ink:#0D1A17; --slot:#1D2522;
-  --warn:#F0B35A; --warn-bg:#3A2C15; --ok:#6FD39A; --ok-bg:#183424; --full:#5CCDB9; --full-bg:#16332E;
+  --warn:#F0B35A; --warn-bg:#3A2C15; --ok:#6FD39A; --ok-bg:#183424; --full:#5CCDB9; --full-bg:#16332E; --gold:#F2C14E; --gold-bg:#3B3013; --gold-ink:#FFE7A8;
   --shadow:0 1px 0 rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121715; --stage:#1A211E; --panel:#222B27; --ink:#E7ECE8; --muted:#97A39D;
   --line:#35413C; --accent:#3FB8A3; --accent-ink:#0D1A17; --slot:#1D2522;
-  --warn:#F0B35A; --warn-bg:#3A2C15; --ok:#6FD39A; --ok-bg:#183424; --full:#5CCDB9; --full-bg:#16332E;
+  --warn:#F0B35A; --warn-bg:#3A2C15; --ok:#6FD39A; --ok-bg:#183424; --full:#5CCDB9; --full-bg:#16332E; --gold:#F2C14E; --gold-bg:#3B3013; --gold-ink:#FFE7A8;
   --shadow:0 1px 0 rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.35); color-scheme:dark}
 
 html,body{height:100%;margin:0}
@@ -46,7 +46,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
 .title{font-family:var(--f-display);font-size:34px;line-height:1;letter-spacing:.5px;outline:none;
   padding:4px 6px;border-radius:6px;min-width:120px}
 .title:focus{background:var(--slot)}
-.sub{color:var(--muted);font-size:15px}
+.sub{color:var(--muted);font-size:15px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat{margin-left:auto;display:flex;align-items:baseline;gap:6px;font-size:15px;color:var(--muted)}
 .stat b{font-family:var(--f-display);font-size:28px;color:var(--ink);font-weight:400;font-variant-numeric:tabular-nums}
 .tools{display:flex;gap:8px}
@@ -55,6 +55,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
 .btn:hover{border-color:var(--accent)}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.gold{background:var(--gold-bg);color:var(--gold-ink);border-color:var(--gold)}
+.btn.gold.on{background:var(--gold);color:#1D1600}
+.tools{flex:none}.stat{flex:none}
 
 /* 조 칸 */
 [hidden]{display:none!important}
@@ -76,9 +79,20 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
 .memo{box-sizing:border-box;flex:1;min-width:0;width:0;height:28px;border:none;border-bottom:1.5px solid var(--line);background:transparent;
   color:var(--ink);font:600 16px var(--f-body);padding:0 4px;user-select:text;-webkit-user-select:text;border-radius:0}
 .memo:focus{outline:none;border-bottom-color:var(--gc);background:var(--slot)}
-.slot{border:1.5px dashed var(--line);border-radius:8px;background:var(--slot);display:flex;
+.slot{position:relative;border:1.5px dashed var(--line);border-radius:8px;background:var(--slot);display:flex;
   align-items:center;justify-content:center;color:var(--muted);font-size:13px}
 .slot.opt{opacity:.55}
+.slot.opt.starred{opacity:1}
+.star{position:absolute;top:50%;right:6px;transform:translateY(-50%);z-index:3;border:none;background:transparent;
+  font-size:20px;line-height:1;color:var(--gold);padding:2px;pointer-events:none}
+.editing .star{pointer-events:auto;cursor:pointer;color:var(--line)}
+.editing .star.on{color:var(--gold)}
+.editing .slot{cursor:pointer}
+.editing .slot:hover{border-color:var(--gold)}
+.card.win{background:var(--gold-bg);border-color:var(--gold);color:var(--gold-ink);box-shadow:0 0 0 3px var(--gold),0 6px 18px rgba(192,138,18,.35)}
+.edit-bar{display:flex;align-items:center;gap:12px;background:var(--gold-bg);color:var(--gold-ink);border:1px solid var(--gold);
+  border-radius:10px;padding:6px 8px 6px 16px;font-size:16px;font-weight:600;position:absolute;left:28px;right:28px;top:18px;height:46px;box-sizing:border-box;z-index:10}
+.edit-bar span{margin-right:auto}
 .slot .card{width:100%;height:100%}
 
 /* 이름 카드 */
@@ -115,7 +129,25 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
 .sheet .row{display:flex;gap:8px;align-items:center}
 .sheet .row .note{margin-right:auto;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
 .confirm .sheet{width:440px}
-@media (prefers-reduced-motion:reduce){.group.reject{animation:none}}
+.sheet .field{display:flex;align-items:center;gap:10px;font-size:15px}
+.sheet .field input[type=number]{width:72px;font:600 16px var(--f-body);padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--stage);color:var(--ink);user-select:text}
+.sheet .field label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.sheet .field input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold)}
+.sheet hr{border:none;border-top:1px solid var(--line);margin:4px 0;width:100%}
+.starcount{font-family:var(--f-display);font-size:22px;color:var(--gold)}
+.reveal .sheet{width:760px;align-items:center;text-align:center}
+.reveal h2{font-size:40px;color:var(--gold)}
+.reveal .row{width:100%}
+.wins{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:8px 0 6px}
+.win-card{min-width:150px;padding:14px 18px;border-radius:12px;background:var(--gold-bg);border:2px solid var(--gold);color:var(--gold-ink);
+  display:flex;flex-direction:column;gap:4px;animation:pop .5s both}
+.win-card b{font-size:26px}
+.win-card small{font-size:14px;font-weight:600}
+.win-card.empty{opacity:.55;border-style:dashed}
+@keyframes pop{from{opacity:0;transform:scale(.6) translateY(12px)}to{opacity:1;transform:none}}
+.toast{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--stage);
+  padding:12px 20px;border-radius:10px;font-size:16px;font-weight:600;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){.group.reject,.win-card{animation:none}}
 </style>
 </head>
 <body>
@@ -126,14 +158,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
     <div class="stage" id="stage">
       <div class="top">
         <div class="title" id="title" contenteditable="true" spellcheck="false">조 편성</div>
-        <div class="sub">이름 카드를 끌어서 조에 놓으세요 · 조당 3~4명 · 카드끼리 겹쳐 놓으면 자리 바꿈 · 두 번 클릭하면 되돌리기</div>
+        <div class="sub">카드를 끌어 조에 놓기 · 조당 3~4명 · 겹치면 자리 바꿈 · 두 번 클릭하면 되돌리기</div>
         <div class="stat">배치 <b id="placed">0</b>/ <span id="total">39</span>명</div>
         <div class="tools">
           <button class="btn" id="btnNames" type="button">이름 입력</button>
           <button class="btn" id="btnRandom" type="button">남은 인원 랜덤 배치</button>
           <button class="btn" id="btnReset" type="button">초기화</button>
+          <button class="btn" id="btnCopy" type="button">결과 복사</button>
+          <button class="btn gold" id="btnStar" type="button">★ 별 이벤트</button>
         </div>
       </div>
+      <div class="edit-bar" id="editBar" hidden><span>★ 별을 놓을 자리를 누르세요. 다시 누르면 빠집니다.</span><button class="btn gold on" id="btnEditDone" type="button">고르기 완료</button></div>
       <div class="groups" id="groups"></div>
       <div class="pool" id="pool" data-drop="pool">
         <div class="pgrid" id="pgrid"></div>
@@ -149,6 +184,36 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
             <button class="btn primary" id="btnApply" type="button">적용</button></div>
         </div>
       </div>
+      <div class="modal confirm" id="starSheet" hidden>
+        <div class="sheet">
+          <h2>★ 별 이벤트</h2>
+          <p>별이 놓인 자리에 앉은 사람이 상품을 받습니다. 지금 놓인 별 <span class="starcount" id="starNow">0</span>개</p>
+          <div class="field"><input type="number" id="starN" min="1" max="40" value="3"><span>개를</span>
+            <button class="btn gold" id="btnStarRandom" type="button">랜덤으로 놓기</button>
+            <button class="btn" id="btnStarPick" type="button">직접 고르기</button></div>
+          <div class="field"><label><input type="checkbox" id="starHide">발표 전까지 별 감추기</label></div>
+          <hr>
+          <div class="row"><button class="btn" id="btnStarClear" type="button">별 모두 지우기</button><span class="note"></span>
+            <button class="btn" id="btnStarClose" type="button">닫기</button>
+            <button class="btn gold on" id="btnReveal" type="button">당첨 발표</button></div>
+        </div>
+      </div>
+      <div class="modal reveal" id="reveal" hidden>
+        <div class="sheet">
+          <h2>★ 당첨을 축하합니다 ★</h2>
+          <div class="wins" id="wins"></div>
+          <div class="row"><span class="note" id="revealNote"></span><button class="btn primary" id="btnRevealClose" type="button">닫기</button></div>
+        </div>
+      </div>
+      <div class="modal confirm" id="copyBox" hidden>
+        <div class="sheet">
+          <h2>결과 복사</h2>
+          <p>아래 내용이 선택되어 있습니다. Ctrl+C로 복사한 뒤 엑셀에 붙여 넣으세요.</p>
+          <textarea id="copyText" spellcheck="false" style="height:220px" readonly></textarea>
+          <div class="row"><span class="note"></span><button class="btn primary" id="btnCopyClose" type="button">닫기</button></div>
+        </div>
+      </div>
+      <div class="toast" id="toast" hidden></div>
       <div class="modal confirm" id="confirm" hidden>
         <div class="sheet">
           <h2>배치를 비울까요?</h2>
@@ -166,11 +231,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);
 (function(){
 const G=10, CAP=4, MIN=3, MAXN=40, KEY='team-board-v2';
 const SAMPLE=['최수철','최하웅','송광훈','김용천','추민순','김진호','성지혜','김다슬','백설희','김용국','손선효','서상도','김형수','최혜진','구제국','이태흥','신문섭','안현선','류지환','송정훈','유주연','한효정','조대영','김경현','이승연','조유라','심정희','김동원','양용열','위다미','이인정','이민자','박건필','김윤아','정연재','송유청','이대연','김준영','최장호'];
-let names=SAMPLE.slice(), groups=[...Array(G)].map(()=>[]), isSample=false, memos=Array(G).fill('');
+let names=SAMPLE.slice(), groups=[...Array(G)].map(()=>[]), isSample=false, memos=Array(G).fill(''), stars=[], starHidden=false, revealed=false, editing=false;
 
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');
-  if(s&&Array.isArray(s.names)&&Array.isArray(s.groups)&&s.groups.length===G){names=s.names;groups=s.groups;isSample=!!s.isSample;if(Array.isArray(s.memos)&&s.memos.length===G)memos=s.memos;}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({names,groups,isSample,memos,title:$('title').textContent}))}catch(e){}}
+  if(s&&Array.isArray(s.names)&&Array.isArray(s.groups)&&s.groups.length===G){names=s.names;groups=s.groups;isSample=!!s.isSample;if(Array.isArray(s.memos)&&s.memos.length===G)memos=s.memos;if(Array.isArray(s.stars))stars=s.stars;starHidden=!!s.starHidden;revealed=!!s.revealed;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({names,groups,isSample,memos,stars,starHidden,revealed,title:$('title').textContent}))}catch(e){}}
 function $(id){return document.getElementById(id)}
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.title)$('title').textContent=s.title}catch(e){}
 
@@ -195,8 +260,12 @@ function render(){
     mi.addEventListener('input',()=>{memos[g]=mi.value;save()});
     mi.addEventListener('keydown',e=>{if(e.key==='Enter')mi.blur()});
     const sl=box.querySelector('.slots');
-    for(let k=0;k<CAP;k++){const s=document.createElement('div');s.className='slot'+(k===CAP-1?' opt':'');
-      if(groups[g][k]!==undefined){s.className='slot';s.appendChild(makeCard(groups[g][k]))}else s.textContent=k===CAP-1?'4번째 (선택)':(k+1)+'번';
+    for(let k=0;k<CAP;k++){const s=document.createElement('div');s.className='slot'+(k===CAP-1?' opt':'');s.dataset.seat=g+'-'+k;
+      const on=stars.includes(g+'-'+k);if(on)s.classList.add('starred');
+      if(groups[g][k]!==undefined){s.className='slot'+(on?' starred':'');const c=makeCard(groups[g][k]);if(on&&revealed)c.classList.add('win');s.appendChild(c)}
+      else s.textContent=k===CAP-1?'4번째 (선택)':(k+1)+'번';
+      if(editing||(on&&!starHidden)||(on&&revealed)){const b=document.createElement('button');b.type='button';b.className='star'+(on?' on':'');
+        b.textContent='★';b.setAttribute('aria-label',(g+1)+'조 '+(k+1)+'번 자리 별');s.appendChild(b)}
       sl.appendChild(s)}
     gw.appendChild(box);
   }
@@ -204,13 +273,14 @@ function render(){
   for(let i=0;i<names.length;i++){const h=document.createElement('div');h.className='home';
     if(!groupOf(i)){h.classList.add('filled');h.appendChild(makeCard(i));left++}pg.appendChild(h)}
   $('placed').textContent=names.length-left;$('total').textContent=names.length;
+  $('starNow').textContent=stars.length;stage.classList.toggle('editing',editing);$('editBar').hidden=!editing;
   save();
 }
 
 /* 드래그 */
 let drag=null;
 stage.addEventListener('pointerdown',e=>{
-  const c=e.target.closest('.card');if(!c||e.button>0)return;
+  if(editing)return;const c=e.target.closest('.card');if(!c||e.button>0)return;
   const r=c.getBoundingClientRect();
   drag={idx:+c.dataset.idx,el:c,sx:e.clientX,sy:e.clientY,ox:e.clientX-r.left,oy:e.clientY-r.top,w:r.width/scale,h:r.height/scale,ghost:null,over:null};
   c.setPointerCapture(e.pointerId);
@@ -248,7 +318,9 @@ function end(e){
 }
 stage.addEventListener('pointerup',end);
 stage.addEventListener('pointercancel',e=>{if(drag){drag.ghost&&drag.ghost.remove();drag=null;render()}});
-stage.addEventListener('dblclick',e=>{const c=e.target.closest('.slot .card');if(!c)return;const s=groupOf(+c.dataset.idx);if(s){groups[s[0]].splice(s[1],1);render()}});
+stage.addEventListener('click',e=>{if(!editing)return;const s=e.target.closest('.slot');if(!s)return;
+  const key=s.dataset.seat,i=stars.indexOf(key);if(i>=0)stars.splice(i,1);else stars.push(key);revealed=false;render()});
+stage.addEventListener('dblclick',e=>{if(editing)return;const c=e.target.closest('.slot .card');if(!c)return;const s=groupOf(+c.dataset.idx);if(s){groups[s[0]].splice(s[1],1);render()}});
 
 /* 랜덤 배치: 인원이 적은 조부터 채움 */
 $('btnRandom').onclick=()=>{
@@ -261,7 +333,50 @@ $('btnRandom').onclick=()=>{
 };
 $('btnReset').onclick=()=>{$('confirm').hidden=false};
 $('btnNo').onclick=()=>{$('confirm').hidden=true};
-$('btnYes').onclick=()=>{groups=groups.map(()=>[]);$('confirm').hidden=true;render()};
+$('btnYes').onclick=()=>{groups=groups.map(()=>[]);revealed=false;$('confirm').hidden=true;render()};
+
+/* 별 이벤트 */
+function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
+$('btnStar').onclick=()=>{$('starHide').checked=starHidden;$('starNow').textContent=stars.length;$('starSheet').hidden=false};
+$('btnStarClose').onclick=()=>{$('starSheet').hidden=true};
+$('starHide').onchange=e=>{starHidden=e.target.checked;render()};
+$('btnStarRandom').onclick=()=>{
+  let n=Math.max(1,Math.min(40,parseInt($('starN').value,10)||1));
+  /* 이미 사람이 앉아 있으면 그 자리 중에서, 아니면 항상 채워지는 1~3번 자리 중에서 고름 */
+  let pool=[];for(let g=0;g<G;g++)for(let k=0;k<CAP;k++)if(groups[g][k]!==undefined)pool.push(g+'-'+k);
+  if(!pool.length)for(let g=0;g<G;g++)for(let k=0;k<MIN;k++)pool.push(g+'-'+k);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  stars=pool.slice(0,n);revealed=false;render();$('starSheet').hidden=true;
+  toast('별 '+stars.length+'개를 놓았습니다'+(starHidden?' (감춤)':''));
+};
+$('btnStarPick').onclick=()=>{editing=true;revealed=false;$('starSheet').hidden=true;render()};
+$('btnEditDone').onclick=()=>{editing=false;render();toast('별 '+stars.length+'개가 놓여 있습니다')};
+$('btnStarClear').onclick=()=>{stars=[];revealed=false;render()};
+$('btnReveal').onclick=()=>{
+  if(!stars.length){toast('먼저 별을 놓아 주세요');return}
+  const list=stars.map(k=>k.split('-').map(Number)).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const w=$('wins');w.innerHTML='';let got=0;
+  list.forEach(([g,k],n)=>{const i=groups[g][k];const d=document.createElement('div');
+    d.className='win-card'+(i===undefined?' empty':'');d.style.animationDelay=(n*0.35)+'s';
+    d.innerHTML='<small>'+(g+1)+'조 '+(k+1)+'번 자리'+(memos[g]?' · '+esc(memos[g]):'')+'</small><b>'+(i===undefined?'빈자리':esc(names[i]))+'</b>';
+    if(i!==undefined)got++;w.appendChild(d)});
+  $('revealNote').textContent='당첨 '+got+'명'+(got<list.length?' · 빈자리 '+(list.length-got)+'곳':'');
+  revealed=true;$('starSheet').hidden=true;$('reveal').hidden=false;render();
+};
+$('btnRevealClose').onclick=()=>{$('reveal').hidden=true};
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* 결과 복사: 엑셀에 붙여 넣는 표 */
+$('btnCopy').onclick=()=>{
+  const rows=[['조','메모','1','2','3','4','인원'].join('\t')];
+  for(let g=0;g<G;g++){const r=[(g+1)+'조',memos[g]||''];
+    for(let k=0;k<CAP;k++){const i=groups[g][k];r.push(i===undefined?'':names[i]+(revealed&&stars.includes(g+'-'+k)?' ★':''))}
+    r.push(groups[g].length);rows.push(r.join('\t'))}
+  const txt=rows.join('\n');
+  const fallback=()=>{$('copyText').value=txt;$('copyBox').hidden=false;$('copyText').focus();$('copyText').select()};
+  try{navigator.clipboard.writeText(txt).then(()=>toast('복사했습니다. 엑셀에 붙여 넣으세요'),fallback)}catch(e){fallback()}
+};
+$('btnCopyClose').onclick=()=>{$('copyBox').hidden=true};
 
 /* 이름 입력 */
 function parse(t){return t.split(/[\n,\t]+/).map(s=>s.trim()).filter(Boolean)}
@@ -271,7 +386,7 @@ $('btnNames').onclick=()=>{$('namesInput').value=names.join('\n');countNote();$(
 $('namesInput').addEventListener('input',countNote);
 $('btnCancel').onclick=()=>{$('modal').hidden=true};
 $('btnApply').onclick=()=>{const list=parse($('namesInput').value).slice(0,MAXN);if(!list.length)return;
-  names=list;groups=groups.map(()=>[]);isSample=false;$('modal').hidden=true;render()};
+  names=list;groups=groups.map(()=>[]);isSample=false;revealed=false;$('modal').hidden=true;render()};
 $('title').addEventListener('input',save);
 $('title').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();e.target.blur()}});
 
